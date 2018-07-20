@@ -47,6 +47,7 @@ class MqttProto {
     config.getConfig("actors").root.map{
       case (name:String,configObject:ConfigObject) => {
         log.info(" found {} ",name)
+        None
       }
       case (name:String,value:ConfigValue) => {log.info(" found  also {} ",name)}
     }

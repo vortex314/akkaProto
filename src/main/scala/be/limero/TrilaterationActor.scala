@@ -3,7 +3,7 @@ package be.limero
 import java.util
 
 import akka.actor.{Actor, ActorLogging, Props, Timers}
-import be.limero.Bus.PropertyChange
+import be.limero.MqttStream.Property
 import be.limero.TrilaterationActor.{Tick, TickKey}
 
 import scala.concurrent.duration._
@@ -43,7 +43,7 @@ class TrilaterationActor(pattern: String) extends Actor with ActorLogging with T
   }
 
   override def receive: Receive = {
-    case PropertyChange(topic, payload) => {
+    case Property(topic, payload) => {
       log.debug(" message received ")
       val anchor: Anchor = findAnchor(topic.device)
       if (topic.property == "x") anchor.x = payload.toDouble
@@ -53,10 +53,11 @@ class TrilaterationActor(pattern: String) extends Actor with ActorLogging with T
         anchor.t = System.currentTimeMillis()
       }
       updates += 1
+      sender.tell(Property(topic,payload),self)
     }
     case Tick => {
       anchors.forEach((key, anchor) => log.info(" anchor {} = {},{},{} ", key, anchor.x, anchor.y, anchor.distance))
-      log.info(" found {} anchors, updates {}", anchors.size(), updates)
+      log.info(s" found {} anchors, updates : $updates " , anchors.size())//, updates)
     }
   }
 }

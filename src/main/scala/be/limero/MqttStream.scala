@@ -98,7 +98,6 @@ class MqttStream {
       })
       implicit val timeout:Timeout = new FiniteDuration(100,TimeUnit.MILLISECONDS)
       def call(actor:ActorRef) = Flow[MqttStream.Property].mapAsync(parallelism = 5)(elem => (actor ? elem).mapTo[MqttStream.Property])
-
       in ~> bcast
       bcast ~> service("dwm1000") ~> logger("DWM1000") ~> merge ~> f3 ~> out
       bcast ~> service("dwm1000") ~> call(trilat) ~> merge

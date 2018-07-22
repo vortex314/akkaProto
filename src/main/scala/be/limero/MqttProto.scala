@@ -28,8 +28,8 @@ class MqttProto {
 
   val connectionSettings.automaticReconnect = true
 
-  implicit val system = ActorSystem("limero")
-  implicit val materializer = ActorMaterializer()
+  implicit val system :ActorSystem = ActorSystem("limero")
+  implicit val materializer : Materializer = ActorMaterializer()
 
   val config = system.settings.config
 
